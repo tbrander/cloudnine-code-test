@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Spotify.Api.Client/App_Data/ClientDependency/NORDIC114-3e1e14ab2b82ee81113de3676d95891c-map.xml

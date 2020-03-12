@@ -1,0 +1,40 @@
+﻿@model Spotify.Api.Client.Models.SearchQueryModel
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Recommendation", "Spotify", FormMethod.Post))
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Get recommendations by searching for an artist or a track</h5>
+                    <hr />
+
+                    @Html.ValidationSummary(true)
+                    <div class="form-group">
+                        @Html.TextBoxFor(m => m.Query, new { @class = "form-control", placeholder = "Enter search criteria", required = "required" })
+                    </div>
+                    <div class="form-group">
+                        <h6 class="card-subtitle mb-2 text-muted">Choose the type of recommendation you want</h6>
+                        <div class="border p-3" id="rbtnList">
+                            <p>
+                                @Html.RadioButtonFor(m => m.SeedType, "Artist", new { id = "artist", @checked="checked"})
+                                @Html.Label("Artists", new { @for = "artist" })
+                            </p>
+                            <p>
+                                @Html.RadioButtonFor(m => m.SeedType, "Genres", new { id = "genres" })
+                                @Html.Label("Genres", new { @for = "genres" })
+                            </p>
+                            <p>
+                                @Html.RadioButtonFor(m => m.SeedType, "Track", new { id = "track" })
+                                @Html.Label("Tracks", new { @for = "track" })
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
