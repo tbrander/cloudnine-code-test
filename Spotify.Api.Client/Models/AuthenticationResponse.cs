@@ -6,6 +6,9 @@ using System.Web;
 
 namespace Spotify.Api.Client.Models
 {
+    /// <summary>
+    /// Model representing the Json-object holding authentication information reterived from the authentication endpoint.
+    /// </summary>
     public class AuthenticationResponse
     {
 

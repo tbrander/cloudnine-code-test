@@ -2,14 +2,18 @@
 
 namespace Spotify.Api.Client.Models
 {
+    /// <summary>
+    /// Search query model
+    /// </summary>
     public class SearchQueryModel
     {
         [Required]
-        [Display(Name = "Search query")]
         public string Query { get; set; }
 
+        /// <summary>
+        /// The type of recommendation (artist, genre or track)
+        /// </summary>
         [Required]
-        [Display(Name = "Get recommendations for")]
         public string SeedType { get; set; }
     }
 }
