@@ -2,6 +2,7 @@
 using RestSharp;
 using Spotify.Api.Client.Models;
 using Spotify.Api.Client.Models.RecommendationModel;
+using Spotify.Api.Client.Models.TopTracks;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -22,13 +23,70 @@ namespace Spotify.Api.Client.Helpers
         private readonly string BaseUrl = $"{ConfigurationManager.AppSettings["SpotifyApiBaseUrl"]}/{ConfigurationManager.AppSettings["SpotifyApiVersion"]}/";
         private readonly string ClientId = ConfigurationManager.AppSettings["SpotifyClientId"];
         private readonly string ClientSecret = ConfigurationManager.AppSettings["SpotifyClientSecret"];
+        private readonly string AuthenticationEndpoint = ConfigurationManager.AppSettings["SpotifyAuthTokenUrl"];
 
         /// <summary>
-        /// Request data from the search Api by query and type (artist and tracks)
+        /// Returns list of top tracks for the specified artist/spotify id in the given country
+        /// </summary>
+        /// <param name="spotifyId">id of the artist</param>
+        /// <param name="countryCode">top tracks from this country</param>
+        /// <returns></returns>
+        // https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/
+        public async Task<TopTracks> TopTracks(string spotifyId, string countryCode)
+        {
+            IRestClient restclient = new RestClient(BaseUrl);
+
+            RestRequest request = new RestRequest($"artists/{spotifyId}/top-tracks");
+            request.AddQueryParameter("country", countryCode);
+
+            string token = string.Empty;
+            try
+            {
+                token = await GetAuthenticationTokenAsync();
+            }
+            catch (Exception e)
+            {
+                LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, e);
+
+            }
+
+            request.AddHeader("Authorization", $"Bearer {token}");
+
+            // execute the request and retrieve the response
+            IRestResponse response = await restclient.ExecuteAsync<TopTracks>(request);
+
+            if (response.ErrorException != null)
+            {
+                LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, response.ErrorException);
+            }
+            else if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                LogHelper.WriteMessageToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, $"Status code: {(int)response.StatusCode}, description: {response.StatusDescription}");
+            }
+            else
+            {
+                try
+                {
+                    var topTracksModel = JsonConvert.DeserializeObject<TopTracks>(response.Content);
+                    
+                    return topTracksModel;
+                }
+                catch (Exception e)
+                {
+                    LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, e);
+                }
+            }
+
+            return null;
+        }
+        
+        /// <summary>
+        /// Request data from the Spotify search Api by query and type (artist, track or genre)
         /// </summary>
         /// <param name="query">search query</param>
         /// <param name="type">artist, genre, tracks</param>
         /// <returns>Task</returns>
+        // https://developer.spotify.com/documentation/web-api/reference/search/search/
         public async Task<RecommendationViewModel> Search(string query, string type)
         {
             IRestClient restclient = new RestClient(BaseUrl);
@@ -45,7 +103,19 @@ namespace Spotify.Api.Client.Helpers
                     request.AddQueryParameter("type", "track"); break;
             }
 
-            string token = await GetAuthenticationTokenAsync();
+            string token = string.Empty;
+            try
+            {
+                token = await GetAuthenticationTokenAsync();
+            }
+            catch (Exception e)
+            {
+                LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, e);
+                return new RecommendationViewModel()
+                {
+                    Message = $"An error occured, please try again later",
+                };
+            }
 
             request.AddHeader("Authorization", $"Bearer {token}");
 
@@ -65,57 +135,32 @@ namespace Spotify.Api.Client.Helpers
                 try
                 {
                     var searchModel = JsonConvert.DeserializeObject<SearchModel>(response.Content);
-                    List<string> genres = new List<string>();
-                    RecommendationModel result = GetRecommendations(searchModel, type, genres);
-                    
-                    return new RecommendationViewModel()
+
+                    // PickRandomGenres: An artist is often divided into several genres but since the api only takes in 5 genres these 5 are randomly picked.
+                    List<string> genres = type == Constants.GENRES ? PickRandomGenres(searchModel.Artists.Items.SelectMany(g => g.Genres).Select(x => x.ToString()).ToList()) : null;
+                    RecommendationModel recommendation = await GetRecommendations(searchModel, type, genres);
+
+                    if (recommendation != null && recommendation.Tracks != null)
                     {
-                        Genres = genres,
-                        Type = type,
-                        Message = result.Tracks.Any() ? $"Search string '{query}'" : $"Found no results for '{query}' ",
-                        Tracks = result.Tracks
-                    };
+                        return new RecommendationViewModel()
+                        {
+                            Genres = genres,
+                            Type = type,
+                            Message = recommendation.Tracks.Any() ? $"Search string '{query}'" : $"Found no recommendation for '{query}' ",
+                            Tracks = recommendation.Tracks
+                        };
+                    }
                 }
                 catch (Exception e)
                 {
                     LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, e);
                 }
             }
+
             return new RecommendationViewModel()
             {
-                Type = type,
-                Message = $"Found no results for '{query}'",
-                Tracks = null
+                Message = $"An error occured, please try again later",
             };
-        }
-
-        /// <summary>
-        /// Prepare request and execute task for retrieving recommendation data based on search result and user selected type
-        /// </summary>
-        /// <param name="model">Search model</param>
-        /// <param name="type">Selected type (artist, genres, tracks)</param>
-        /// <returns>RecommendationModel</returns>
-        private RecommendationModel GetRecommendations(SearchModel model, string type, List<string> genres)
-        {
-            try
-            {
-                Dictionary<string, string> seeds = ExtractSeeds(model, type);
-                
-                if(type == Constants.GENRES)
-                {
-                    genres.AddRange(seeds.Values?.ToList());
-                }
-                
-                Task<RecommendationModel> recommendationTask = Task.Run(async () => await Recommendation(model, seeds));
-                recommendationTask.Wait();
-
-                RecommendationModel result = recommendationTask.Result;
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         /// <summary>
@@ -124,10 +169,10 @@ namespace Spotify.Api.Client.Helpers
         /// </summary>
         /// <param name="model">SearchModel obtained in the previus search request</param>
         /// <returns>Dictionary(string, string)</returns>
-        private Dictionary<string, string> ExtractSeeds(SearchModel model, string type)
+        private Dictionary<string, string> ExtractSeeds(SearchModel model, string type, List<string> genres = null)
         {
             Dictionary<string, string> seeds = new Dictionary<string, string>();
-            
+
             switch (type)
             {
                 case Constants.ARTIST:
@@ -137,10 +182,8 @@ namespace Spotify.Api.Client.Helpers
                     }
                     break;
                 case Constants.GENRES:
-                    if (model.Artists != null && model.Artists.Items != null)
+                    if (genres != null)
                     {
-                        var genres = PickRandomGenres(model.Artists.Items.SelectMany(x => x.Genres).Select(z => z.ToString()).Distinct().ToList());
-
                         seeds.Add("seed_genres", string.Join(",", genres));
                     }
                     break;
@@ -157,11 +200,12 @@ namespace Spotify.Api.Client.Helpers
         /// <summary>
         /// Pick random genres from the search result (the api only allows 5 to be passed in when fetching recommendations)
         /// </summary>
-        /// <param name="genres"></param>
+        /// <param name="genres">list of genres for the artist</param>
         /// <returns></returns>
         private List<string> PickRandomGenres(List<string> genres)
         {
-            if(genres.Count() <= Constants.MAX_SEED_VALUES)
+            // no need to pick random when we got max values or less
+            if (genres.Count() <= Constants.MAX_SEED_VALUES)
             {
                 return genres;
             }
@@ -169,7 +213,7 @@ namespace Spotify.Api.Client.Helpers
             List<string> randomGenres = new List<string>();
             Random rnd = new Random();
 
-            while(randomGenres.Count() < Constants.MAX_SEED_VALUES)
+            while (randomGenres.Count() < Constants.MAX_SEED_VALUES)
             {
                 string genre = genres.ElementAt(rnd.Next(genres.Count));
                 if (!randomGenres.Contains(genre))
@@ -177,7 +221,7 @@ namespace Spotify.Api.Client.Helpers
                     randomGenres.Add(genre);
                 }
             }
-            
+
             return randomGenres;
         }
 
@@ -185,14 +229,19 @@ namespace Spotify.Api.Client.Helpers
         /// Request recommendation data based on search result and user selected type
         /// </summary>
         /// <param name="model">Search model</param>
-        /// <param name="seeds">Dictionary with seed ids</param>
+        /// <param name="type">the type of recommendation requested</param>
+        /// <param name="genres">list of genres for the artist</param>
         /// <returns>Task</returns>
-        private async Task<RecommendationModel> Recommendation(SearchModel model, Dictionary<string, string> seeds)
+        // https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
+        private async Task<RecommendationModel> GetRecommendations(SearchModel model, string type, List<string> genres = null)
         {
+            Dictionary<string, string> seeds = ExtractSeeds(model, type, genres);
+
             IRestClient restclient = new RestClient(BaseUrl);
 
             RestRequest request = new RestRequest("recommendations");
 
+            // adding seed parameter
             foreach (KeyValuePair<string, string> entry in seeds)
             {
                 request.AddQueryParameter(entry.Key, entry.Value);
@@ -220,7 +269,6 @@ namespace Spotify.Api.Client.Helpers
                 }
                 catch (Exception)
                 {
-                    LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, response.ErrorException);
                     throw;
                 }
             }
@@ -260,10 +308,9 @@ namespace Spotify.Api.Client.Helpers
         /// Fetch new token from the Spotify Api
         /// </summary>
         /// <returns>Task</returns>
+        // https://developer.spotify.com/documentation/general/guides/authorization-guide/
         private async Task<AuthenticationResponse> GetAuthenticationTokenResponse()
         {
-            const string AuthenticationEndpoint = "https://accounts.spotify.com/api/token";
-
             IRestClient restclient = new RestClient(AuthenticationEndpoint);
             RestRequest request = new RestRequest() { Method = Method.POST };
             request.AddParameter("grant_type", "client_credentials");
@@ -273,11 +320,11 @@ namespace Spotify.Api.Client.Helpers
 
             if (response.ErrorException != null)
             {
-                LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, response.ErrorException);
+                throw response.ErrorException;
             }
             else if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                LogHelper.WriteMessageToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, $"Status code: {(int)response.StatusCode}, description: {response.StatusDescription}");
+                throw new System.Web.HttpException($"{this.GetType().Name}.{new StackTrace().GetFrame(0).GetMethod().Name}: Status code: {(int)response.StatusCode}, description: {response.StatusDescription}");
             }
             else
             {
@@ -288,11 +335,9 @@ namespace Spotify.Api.Client.Helpers
                 }
                 catch (Exception)
                 {
-                    LogHelper.WriteExceptionToLog(this.GetType().Name, new StackTrace().GetFrame(0).GetMethod().Name, response.ErrorException);
                     throw;
                 }
             }
-            return null;
         }
 
         /// <summary>

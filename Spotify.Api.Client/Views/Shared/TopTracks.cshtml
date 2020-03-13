@@ -1,0 +1,24 @@
+﻿@model Spotify.Api.Client.Models.TopTracks.TopTracks
+
+<div class="row">
+
+
+    @foreach (var track in Model.Tracks)
+    {
+        <div class="col-md-4">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">@(string.Join(", ", track.Album.Artists.Distinct().Select(n => n.Name))) - <small>@track.Album.Name</small></h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><img class="card-img-top img-thumbnail" src="@track.Album.Images[1].Url" alt="@track.Album.Name"></li>
+                    <li class="list-group-item">Release date: @track.Album.Release_date</li>
+                    <li class="list-group-item">@track.Name - @($"{Math.Round((decimal)track.Duration_ms / 1000 / 60, 2)} min")</li>
+                </ul>
+                <div class="card-body">
+                    <a href="@track.External_urls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -6,47 +6,72 @@
         <div class="alert alert-light">
             <h3>@Model.Message</h3>
             <hr />
-            <p>Found @Model.Tracks.Count()</p>
-            @if (Model.Genres.Any())
-            {
-                <p>Genres: @(string.Join("", Model.Genres))</p>
-            }
         </div>
-        <div class="row">
-            @foreach (var record in Model.Tracks)
-            {
-                foreach (var artist in record.Artists)
+        @if (Model.Tracks != null)
+        {
+            <div>
+                <p>@($"Found {Model.Tracks.Count()} similar artists/tracks")</p>
+                @if (Model.Genres != null && Model.Genres.Any())
                 {
-                    <div class="col-md-4 p-3">
-                        <div class="card">
-
-                            @switch (Model.Type)
-                            {
-                                case "Artist":
-                                    @RenderArtistHtml(artist);
-                                    break;
-                                case "Genres":
-                                    @RenderGenreHtml(artist, record);
-                                    break;
-                                case "Track":
-                                    @RenderTrackHtml(artist, record);
-                                    break;
-                            }
-                        </div>
-                    </div>
+                    <p>Genres: @(string.Join(", ", Model.Genres))</p>
                 }
-            }
+            </div>
+            <div class="row">
+                @foreach (var record in Model.Tracks)
+                {
+                    foreach (var artist in record.Artists)
+                    {
+                        <div class="col-md-4 p-3">
+                            <div class="card">
+
+                                @switch (Model.Type)
+                                {
+                                    case "Artist":
+                                        @RenderArtistHtml(artist);
+                                        break;
+                                    case "Genres":
+                                        @RenderGenreHtml(artist, record);
+                                        break;
+                                    case "Track":
+                                        @RenderTrackHtml(artist, record);
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="toptracks_modal">
+    <div class="modal-dialog" role="document" style="max-width:990px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Top tracks</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="_topTracks"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
+
 
 @helper RenderTrackHtml(Artist artist, Track track)
 {
 
     <div class="card-header"><h5>@artist.Name</h5></div>
     <div class="card-body">
-        <div class="card-subtitle"><i>@track.Type</i></div>
-        <p class="card-text">@track.Name, @($"{Math.Round((decimal)track.Duration_ms / 1000 / 60, 2)} min")</p>
+        <div class="card-subtitle"><i>@track.Name</i></div>
+        <p class="card-text">@($"{Math.Round((decimal)track.Duration_ms / 1000 / 60, 2)} min")</p>
         @if (!string.IsNullOrWhiteSpace(track.Preview_url))
         {
             <figure>
@@ -58,9 +83,12 @@
                 </audio>
             </figure>
         }
+        <h6 class="card-link"><a href="@track.ExternalUrls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a></h6>
     </div>
     <div class="card-footer">
-        <h6 class="card-link"><a href="@track.ExternalUrls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a></h6>
+        <div class="card-link">
+            <button class="btn btn-sm btn-outline-info toptracksBtn" data-sid="@artist.Id"><i class="far fa-star"></i> See top tracks</button>
+        </div>
     </div>
 }
 
@@ -69,10 +97,12 @@
 
     <div class="card-header"><h5>@artist.Name</h5></div>
     <div class="card-body">
-        <div class="card-subtitle"><i>@artist.Type</i></div>
+        <h6 class="card-link"><a href="@artist.ExternalUrls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a></h6>
     </div>
     <div class="card-footer">
-        <h6 class="card-link"><a href="@artist.ExternalUrls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a></h6>
+        <div class="card-link">
+            <button class="btn btn-sm btn-outline-info toptracksBtn" data-sid="@artist.Id"><i class="far fa-star"></i> See top tracks</button>
+        </div>
     </div>
 }
 
@@ -80,8 +110,8 @@
 {
     <div class="card-header"><h5>@artist.Name</h5></div>
     <div class="card-body">
-        <div class="card-subtitle"><i>@track.Type</i></div>
-        <p class="card-text">@track.Name, @($"{Math.Round((decimal)track.Duration_ms / 1000 / 60, 2)} min")</p>
+        <div class="card-subtitle"><i>@track.Name</i></div>
+        <p class="card-text">@($"{Math.Round((decimal)track.Duration_ms / 1000 / 60, 2)} min")</p>
         @if (!string.IsNullOrWhiteSpace(track.Preview_url))
         {
             <figure>
@@ -93,8 +123,27 @@
                 </audio>
             </figure>
         }
-    </div>
-    <div class="card-footer">
         <h6 class="card-link"><a href="@track.ExternalUrls.Spotify" target="_blank"><i class="fab fa-spotify"></i> Open in spotify</a></h6>
     </div>
+    <div class="card-footer">
+        <div class="card-link">
+            <button class="btn btn-sm btn-outline-info toptracksBtn" data-sid="@artist.Id"><i class="far fa-star"></i> See top tracks</button>
+        </div>
+    </div>
 }
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.toptracksBtn').click(function () {
+            var spotifyId = $(this).data('sid');
+            $.get('@Url.Action("TopTracks", "Spotify")', { spotifyId: spotifyId, countryCode: "SE" },
+                function (returnedData) {
+                    $('#toptracks_modal #_topTracks').html(returnedData);
+                    $('#toptracks_modal').modal('show');
+                }).fail(function () {
+                    alert('ERROR');
+                });
+        });
+    })
+
+</script>
