@@ -48,14 +48,12 @@ namespace Spotify.Api.Client.Controllers
         [Route("Details")]
         public async Task<ActionResult> TopTracks(string spotifyId, string countryCode = "SE")
         {
-            /*
-             Förbättringsförslag: 
-             - Enklare vymodell
-             - Gruppera tracks under varje album
-             */
+            if (!string.IsNullOrWhiteSpace(spotifyId))
+            {
+                return PartialView(await new ApiHelper().TopTracks(spotifyId, countryCode));
+            }
 
-            var model = await new ApiHelper().TopTracks(spotifyId, countryCode);
-            return PartialView(model);
+            throw new System.Web.HttpException(400, "Bad Request");
         }
     }
 }

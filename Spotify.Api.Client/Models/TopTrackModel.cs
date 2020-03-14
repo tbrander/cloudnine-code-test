@@ -23,16 +23,16 @@ namespace Spotify.Api.Client.Models.TopTracks
         //[JsonProperty("artists")]
         //public List<Artist> Artists { get; set; }
 
-        //[JsonProperty("tracks")]
+        //[JsonProperty("disc_number")]
         //public int disc_number { get; set; }
 
         [JsonProperty("duration_ms")]
         public int Duration_ms { get; set; }
 
-        //[JsonProperty("tracks")]
+        //[JsonProperty("_explicit")]
         //public bool _explicit { get; set; }
 
-        //[JsonProperty("tracks")]
+        //[JsonProperty("external_ids")]
         //public External_Ids external_ids { get; set; }
 
         [JsonProperty("external_urls")]
@@ -57,10 +57,10 @@ namespace Spotify.Api.Client.Models.TopTracks
         //public int popularity { get; set; }
 
         //[JsonProperty("preview_url")]
-        //public string preview_url { get; set; }
+        //public string PreviewUrl { get; set; }
 
-        //[JsonProperty("track_number")]
-        //public int track_number { get; set; }
+        [JsonProperty("track_number")]
+        public int TrackNumber { get; set; }
 
         //[JsonProperty("type")]
         //public string type { get; set; }
@@ -78,8 +78,8 @@ namespace Spotify.Api.Client.Models.TopTracks
         [JsonProperty("artists")]
         public List<Artist> Artists { get; set; }
 
-        //[JsonProperty("external_urls")]
-        //public External_Urls External_urls { get; set; }
+        [JsonProperty("external_urls")]
+        public External_Urls ExternalUrls { get; set; }
 
         //[JsonProperty("href")]
         //public string Href { get; set; }

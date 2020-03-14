@@ -5,20 +5,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
-    <link href="~/Content/bootstrap.css" rel="stylesheet">
-    <link href="~/Content/site.css" rel="stylesheet">
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    
-
+    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet">
+    <link href="@Url.Content("~/Content/site.css")" rel="stylesheet">
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-3.3.1.min.js")"></script>
     <title>@ViewBag.Title - cloudnine - Code test</title>
-    @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
 
     @Html.Partial("_Navbar")
-    
+
     <div class="container body-content mt-5">
         @RenderBody()
         <hr />
@@ -26,9 +22,6 @@
             <p>&copy; @DateTime.Now.Year - Thomas Brander</p>
         </footer>
     </div>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    <script type="text/javascript" src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
 </body>
 </html>

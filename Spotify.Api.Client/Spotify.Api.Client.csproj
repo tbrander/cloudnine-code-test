@@ -157,6 +157,7 @@
     </Compile>
     <Compile Include="Helpers\ApiHelper.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Helpers\ViewModelHelper.cs" />
     <Compile Include="Models\AuthenticationResponse.cs" />
     <Compile Include="Models\Constants.cs" />
     <Compile Include="Models\LogModels\Enums.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Models\SearchModel.cs" />
     <Compile Include="Models\SearchQueryModel.cs" />
     <Compile Include="Models\TopTrackModel.cs" />
+    <Compile Include="Models\TopTrackViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
