@@ -26,13 +26,13 @@ namespace Spotify.Api.Client.Helpers
         private readonly string AuthenticationEndpoint = ConfigurationManager.AppSettings["SpotifyAuthTokenUrl"];
 
         /// <summary>
-        /// Returns list of top tracks for the specified artist/spotify id in the given country
+        /// Returns list of top tracks for the specified artist-/spotify id in the given country
         /// </summary>
         /// <param name="spotifyId">id of the artist</param>
         /// <param name="countryCode">top tracks from this country</param>
         /// <returns></returns>
         // https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/
-        public async Task<TopTracks> TopTracks(string spotifyId, string countryCode)
+        public async Task<List<TopTrackViewModel>> TopTracks(string spotifyId, string countryCode)
         {
             IRestClient restclient = new RestClient(BaseUrl);
 
@@ -67,9 +67,11 @@ namespace Spotify.Api.Client.Helpers
             {
                 try
                 {
-                    var topTracksModel = JsonConvert.DeserializeObject<TopTracks>(response.Content);
+                    var topTracks = JsonConvert.DeserializeObject<TopTracks>(response.Content);
+
+                    List<TopTrackViewModel> ttvm = ViewModelHelper.CreateTopTracksViewModel(topTracks);
                     
-                    return topTracksModel;
+                    return ttvm;
                 }
                 catch (Exception e)
                 {
@@ -142,13 +144,7 @@ namespace Spotify.Api.Client.Helpers
 
                     if (recommendation != null && recommendation.Tracks != null)
                     {
-                        return new RecommendationViewModel()
-                        {
-                            Genres = genres,
-                            Type = type,
-                            Message = recommendation.Tracks.Any() ? $"Search string '{query}'" : $"Found no recommendation for '{query}' ",
-                            Tracks = recommendation.Tracks
-                        };
+                        return ViewModelHelper.CreateRecommendationViewModel(recommendation, query, genres, type);
                     }
                 }
                 catch (Exception e)

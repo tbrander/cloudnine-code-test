@@ -135,8 +135,12 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('.toptracksBtn').click(function () {
+
             var spotifyId = $(this).data('sid');
-            $.get('@Url.Action("TopTracks", "Spotify")', { spotifyId: spotifyId, countryCode: "SE" },
+            //Get the country code from browser settings
+            var cc = navigator.language.split('-')[1].toUpperCase();
+
+            $.get('@Url.Action("TopTracks", "Spotify")', { spotifyId: spotifyId, countryCode: cc },
                 function (returnedData) {
                     $('#toptracks_modal #_topTracks').html(returnedData);
                     $('#toptracks_modal').modal('show');
