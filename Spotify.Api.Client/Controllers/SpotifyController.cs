@@ -38,19 +38,19 @@ namespace Spotify.Api.Client.Controllers
         {
             if (ModelState.IsValid)
             {
-                return View(await new ApiHelper().Search(searchModel.Query, searchModel.SeedType));
+                return View(await new ApiHelper().SearchAsync(searchModel.Query, searchModel.SeedType));
             }
 
             return View("Search", searchModel);
         }
 
         [HttpGet]
-        [Route("Details")]
+        [Route("TopTracks")]
         public async Task<ActionResult> TopTracks(string spotifyId, string countryCode = "SE")
         {
             if (!string.IsNullOrWhiteSpace(spotifyId))
             {
-                return PartialView(await new ApiHelper().TopTracks(spotifyId, countryCode));
+                return PartialView(await new ApiHelper().TopTracksAsync(spotifyId, countryCode));
             }
 
             throw new System.Web.HttpException(400, "Bad Request");

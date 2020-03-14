@@ -32,7 +32,7 @@ namespace Spotify.Api.Client.Helpers
         /// <param name="countryCode">top tracks from this country</param>
         /// <returns></returns>
         // https://developer.spotify.com/documentation/web-api/reference/artists/get-artists-top-tracks/
-        public async Task<List<TopTrackViewModel>> TopTracks(string spotifyId, string countryCode)
+        public async Task<List<TopTrackViewModel>> TopTracksAsync(string spotifyId, string countryCode)
         {
             IRestClient restclient = new RestClient(BaseUrl);
 
@@ -89,7 +89,7 @@ namespace Spotify.Api.Client.Helpers
         /// <param name="type">artist, genre, tracks</param>
         /// <returns>Task</returns>
         // https://developer.spotify.com/documentation/web-api/reference/search/search/
-        public async Task<RecommendationViewModel> Search(string query, string type)
+        public async Task<RecommendationViewModel> SearchAsync(string query, string type)
         {
             IRestClient restclient = new RestClient(BaseUrl);
 
@@ -140,7 +140,7 @@ namespace Spotify.Api.Client.Helpers
 
                     // PickRandomGenres: An artist is often divided into several genres but since the api only takes in 5 genres these 5 are randomly picked.
                     List<string> genres = type == Constants.GENRES ? PickRandomGenres(searchModel.Artists.Items.SelectMany(g => g.Genres).Select(x => x.ToString()).ToList()) : null;
-                    RecommendationModel recommendation = await GetRecommendations(searchModel, type, genres);
+                    RecommendationModel recommendation = await GetRecommendationsAsync(searchModel, type, genres);
 
                     if (recommendation != null && recommendation.Tracks != null)
                     {
@@ -229,7 +229,7 @@ namespace Spotify.Api.Client.Helpers
         /// <param name="genres">list of genres for the artist</param>
         /// <returns>Task</returns>
         // https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/
-        private async Task<RecommendationModel> GetRecommendations(SearchModel model, string type, List<string> genres = null)
+        private async Task<RecommendationModel> GetRecommendationsAsync(SearchModel model, string type, List<string> genres = null)
         {
             Dictionary<string, string> seeds = ExtractSeeds(model, type, genres);
 
@@ -285,7 +285,7 @@ namespace Spotify.Api.Client.Helpers
             {
                 var timeBeforeRequest = DateTime.Now;
 
-                var response = await GetAuthenticationTokenResponse();
+                var response = await GetAuthenticationTokenResponseAsync();
                 token = response?.AccessToken;
 
                 if (token == null)
@@ -305,7 +305,7 @@ namespace Spotify.Api.Client.Helpers
         /// </summary>
         /// <returns>Task</returns>
         // https://developer.spotify.com/documentation/general/guides/authorization-guide/
-        private async Task<AuthenticationResponse> GetAuthenticationTokenResponse()
+        private async Task<AuthenticationResponse> GetAuthenticationTokenResponseAsync()
         {
             IRestClient restclient = new RestClient(AuthenticationEndpoint);
             RestRequest request = new RestRequest() { Method = Method.POST };
