@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using static Spotify.Api.Client.Models.LogModels.Enums;
+using static Spotify.Api.Log.LogModel.Enums;
 
-namespace Spotify.Api.Client.Models.LogModels
+namespace Spotify.Api.Log.LogModel
 { 
     public class Log
     {
@@ -9,7 +9,7 @@ namespace Spotify.Api.Client.Models.LogModels
         public Dictionary<string, string> MetaData { get; set; }
         public LogEvent LogEventType { get; set; }
 
-        public string Name => "SpotifyApiLogger";
+        public string Name => "SpotifyApiLog";
 
         public Log()
         {

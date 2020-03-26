@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Spotify.Api.Client.Models
+namespace Spotify.Api.Models.Constants
 {
     public static class Constants
     {

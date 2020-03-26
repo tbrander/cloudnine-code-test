@@ -1,17 +1,16 @@
-﻿using Spotify.Api.Client.Models.LogModels;
+﻿using NLog;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using static Spotify.Api.Client.Models.LogModels.Enums;
+using System.Text;
+using static Spotify.Api.Log.LogModel.Enums;
 
-namespace Spotify.Api.Client.Helpers
+namespace Spotify.Api.Log.SpotifyLogger
 {
-    public static class LogHelper
+    public static class SpotifyLogger
     {
         public static void WriteMessageToLog(string className, string method, string logMessage, string extendedMessage = null)
         {
-            Log log = new Log()
+            LogModel.Log log = new LogModel.Log()
             {
                 EventSubView = method,
                 LogEventType = LogEvent.Info,
@@ -28,7 +27,7 @@ namespace Spotify.Api.Client.Helpers
 
         public static void WriteExceptionToLog(string className, string method, Exception ex)
         {
-            Log log = new Log()
+            LogModel.Log log = new LogModel.Log()
             {
                 EventSubView = method,
                 LogEventType = LogEvent.Warn,
@@ -41,6 +40,25 @@ namespace Spotify.Api.Client.Helpers
             }
 
             NLogger.LogToFile(log);
+        }
+    }
+
+    public class NLogger
+    {
+        private static Logger Logger => LogManager.GetLogger("SpotifyApiLog");
+
+        public static void LogToFile(LogModel.Log log)
+        {
+            LogEventInfo logEvent = new LogEventInfo(LogLevel.FromString(log.LogEventType.ToString()), log.Name, "");
+            StringBuilder sb = new StringBuilder();
+
+            foreach (KeyValuePair<string, string> entry in log.MetaData)
+            {
+                sb.Append($"{entry.Key}:{entry.Value}");
+            }
+
+            logEvent.Message = sb.ToString();
+            Logger.Log(logEvent);
         }
     }
 }

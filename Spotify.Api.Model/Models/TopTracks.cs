@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Spotify.Api.Client.Models.TopTracks
+namespace Spotify.Api.Model.Json.TopTracks
 {
     /// <summary>
     /// Top tracks model. Uncomment fields if necessary

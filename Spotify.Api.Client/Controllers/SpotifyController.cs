@@ -1,15 +1,23 @@
-﻿using Spotify.Api.Client.Helpers;
-using Spotify.Api.Client.Models;
+﻿using Spotify.Api.Web.Models;
+using Spotify.Api.Service.Contracts;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Spotify.Api.Web.Extensions;
+using System;
 
-namespace Spotify.Api.Client.Controllers
+namespace Spotify.Api.Web.Controllers
 {
     /// <summary>
     /// Controller for the Spotify API
     /// </summary>
     public class SpotifyController : Controller
     {
+        private ISpotifyService _spotifyService;
+        public SpotifyController(ISpotifyService spotifyService)
+        {
+            this._spotifyService = spotifyService;
+        }
+
         [HttpGet]
         [Route("Index")]
         public ActionResult Index()
@@ -38,22 +46,48 @@ namespace Spotify.Api.Client.Controllers
         {
             if (ModelState.IsValid)
             {
-                return View(await new ApiHelper().SearchAsync(searchModel.Query, searchModel.SeedType));
+                try
+                {
+                    return View(await _spotifyService.SearchAsync(searchModel.Query, searchModel.SeedType).ToViewModel());
+                }
+                catch (Exception e)
+                {
+
+                    TempData["ErrorMessage"] = e.Message;
+                    return View("Error");
+                }
             }
 
             return View("Search", searchModel);
         }
 
+
+        /// <summary>
+        /// returns toptracks for the specified spotifyId and country
+        /// </summary>
+        /// <param name="spotifyId">Returns toptracks for this id</param>
+        /// <param name="countryCode">returns toptracks in the country</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("TopTracks")]
         public async Task<ActionResult> TopTracks(string spotifyId, string countryCode = "SE")
         {
             if (!string.IsNullOrWhiteSpace(spotifyId))
             {
-                return PartialView(await new ApiHelper().TopTracksAsync(spotifyId, countryCode));
+                try
+                {
+                    return PartialView(await _spotifyService.TopTracksAsync(spotifyId, countryCode).ToViewModel());
+                }
+                catch (Exception e)
+                {
+                    TempData["ErrorMessage"] = e.Message;
+                    return View("Error");
+                }
             }
 
-            throw new System.Web.HttpException(400, "Bad Request");
+            TempData["ErrorMessage"] = "Something went wrong, try again.";
+
+            return View("Error");
         }
     }
 }
