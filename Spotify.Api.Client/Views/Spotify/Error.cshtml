@@ -1,0 +1,13 @@
+﻿
+@{ 
+    string errorMessage = string.Empty;
+
+    if(TempData["ErrorMessage"] != null)
+    {
+        errorMessage = TempData["ErrorMessage"].ToString();
+    }
+}
+
+<div class="alert alert-danger">
+    <h4>@errorMessage</h4>
+</div>

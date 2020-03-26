@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Spotify.Api.Client.Models
+namespace Spotify.Api.Web.Models
 {
     /// <summary>
     /// Search query model

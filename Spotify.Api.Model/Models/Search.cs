@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Spotify.Api.Client.Models
+namespace Spotify.Api.Model.Json.Search
 {
     /// <summary>
     /// Model representing the json-object returned from the search endpoint 
     /// </summary>
-    public class SearchModel
+    public class Search
     {
         [JsonProperty("albums")]
         public Albums Albums { get; set; }

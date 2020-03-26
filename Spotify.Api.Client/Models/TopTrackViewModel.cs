@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Spotify.Api.Client.Models
+namespace Spotify.Api.Web.Models
 {
     public class TopTrackViewModel
     {

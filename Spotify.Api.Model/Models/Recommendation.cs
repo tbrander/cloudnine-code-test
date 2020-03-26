@@ -1,23 +1,36 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Spotify.Api.Client.Models.RecommendationModel
+namespace Spotify.Api.Model.Json
 {
-    public class RecommendationViewModel
-    {
-        public List<string> Genres { get; set; }
-        public string Type { get; set; }
-        public string Message { get; set; }
-        public List<Track> Tracks { get; set; }
-    }
-
-    public class RecommendationModel
+    public class Recommendation
     {
         [JsonProperty("tracks")]
         public List<Track> Tracks { get; set; }
 
+        [JsonIgnore]
+        public string SeedType { get; set; }
+
+        [JsonIgnore]
+        public List<string> Genres { get; set; }
+
+        [JsonIgnore]
+        public string Message { get; set; }
+        
         //[JsonProperty("seeds")]
         //public List<Seed> Seeds { get; set; }
+
+        public Recommendation()
+        {
+            this.Genres = new List<string>();
+        }
+
+        public Recommendation(string seedType, string message)
+        {
+            this.Genres = new List<string>();
+            this.SeedType = seedType;
+            this.Message = message;
+        }
     }
 
     public class Track

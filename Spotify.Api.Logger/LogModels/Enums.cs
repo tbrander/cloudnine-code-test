@@ -1,5 +1,5 @@
 ﻿
-namespace Spotify.Api.Client.Models.LogModels
+namespace Spotify.Api.Log.LogModel
 {
     public class Enums
     {

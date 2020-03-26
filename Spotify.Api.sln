@@ -5,6 +5,12 @@ VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify.Api.Client", "Spotify.Api.Client\Spotify.Api.Client.csproj", "{10102CAF-B1A7-4FAF-87DB-79FC03D171A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify.Api.Business", "Spotify.Api.Service\Spotify.Api.Business.csproj", "{C48120D6-B9FF-46D9-96A5-3FE0E322C333}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify.Api.Model", "Spotify.Api.Model\Spotify.Api.Model.csproj", "{51246B3F-E1C2-44DA-8D59-0FCDA6969BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spotify.Api.Log", "Spotify.Api.Logger\Spotify.Api.Log.csproj", "{62B659E7-9B98-474C-B362-82A0B0D512C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{10102CAF-B1A7-4FAF-87DB-79FC03D171A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10102CAF-B1A7-4FAF-87DB-79FC03D171A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10102CAF-B1A7-4FAF-87DB-79FC03D171A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C48120D6-B9FF-46D9-96A5-3FE0E322C333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C48120D6-B9FF-46D9-96A5-3FE0E322C333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C48120D6-B9FF-46D9-96A5-3FE0E322C333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C48120D6-B9FF-46D9-96A5-3FE0E322C333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51246B3F-E1C2-44DA-8D59-0FCDA6969BA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51246B3F-E1C2-44DA-8D59-0FCDA6969BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51246B3F-E1C2-44DA-8D59-0FCDA6969BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51246B3F-E1C2-44DA-8D59-0FCDA6969BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62B659E7-9B98-474C-B362-82A0B0D512C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62B659E7-9B98-474C-B362-82A0B0D512C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62B659E7-9B98-474C-B362-82A0B0D512C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62B659E7-9B98-474C-B362-82A0B0D512C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
