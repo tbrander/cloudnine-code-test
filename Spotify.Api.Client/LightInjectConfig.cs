@@ -8,7 +8,7 @@ namespace Spotify.Api.Client
 {
     public static class LightInjectConfig
     {
-        public static ServiceContainer RegisterDefaultService(string baseUrl, string clientSecret, string clientId, string authTokenUrl)
+        public static ServiceContainer RegisterDefaultService(string baseUrl)
         {
             ServiceContainer container = new ServiceContainer();
 

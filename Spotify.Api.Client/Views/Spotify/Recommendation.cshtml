@@ -1,5 +1,5 @@
-﻿@model Spotify.Api.Web.Models.RecommendationView.RecommendationViewModel
-@using Spotify.Api.Web.Models.RecommendationView;
+﻿@model Spotify.Api.Client.Models.RecommendationView.RecommendationViewModel
+@using Spotify.Api.Client.Models.RecommendationView;
 
 <div class="row">
     <div class="col-md-12">
@@ -73,7 +73,6 @@
 
 @helper RenderTrackHtml(Artist artist, Track track)
 {
-
     <div class="card-header"><h5>@artist.Name</h5></div>
     <div class="card-body">
         <div class="card-subtitle"><i>@track.Name</i></div>

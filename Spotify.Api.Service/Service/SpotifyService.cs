@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -19,7 +18,6 @@ using System.Web;
 
 namespace Spotify.Api.Service.Service
 {
-
     public class SpotifyService : ISpotifyService
     {
         private RestClient _restClient;

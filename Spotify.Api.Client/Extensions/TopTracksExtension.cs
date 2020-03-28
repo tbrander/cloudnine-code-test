@@ -1,12 +1,12 @@
 ﻿using Spotify.Api.Log.SpotifyLogger;
 using Spotify.Api.Model.Json.TopTracks;
-using Spotify.Api.Web.Models;
-using Spotify.Web.Extensions;
+using Spotify.Api.Client.Models;
+using Spotify.Client.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Spotify.Api.Web.Extensions
+namespace Spotify.Api.Client.Extensions
 {
     public static class TopTracksExtension
     {

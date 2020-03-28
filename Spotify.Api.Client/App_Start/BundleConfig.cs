@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace Spotify.Api.Web
+namespace Spotify.Api.Client
 {
     public class BundleConfig
     {
