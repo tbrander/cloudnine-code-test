@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Spotify.Api.Web
+namespace Spotify.Api.Client
 {
     public class RouteConfig
     {

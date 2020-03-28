@@ -1,11 +1,11 @@
 ﻿using Spotify.Api.Model.Json;
-using Spotify.Api.Web.Models.RecommendationView;
-using Spotify.Web.Extensions;
+using Spotify.Api.Client.Models.RecommendationView;
+using Spotify.Client.Mappers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Spotify.Api.Web.Extensions
+namespace Spotify.Api.Client.Extensions
 {
     /// <summary>
     /// Mapping a recommendation to a view model

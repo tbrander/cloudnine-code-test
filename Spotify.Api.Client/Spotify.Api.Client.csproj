@@ -171,13 +171,15 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\SpotifyController.cs" />
-    <Compile Include="Extensions\ModelMapper.cs" />
+    <Compile Include="Mappers\ModelMapper.cs" />
     <Compile Include="Extensions\TopTracksExtension.cs" />
     <Compile Include="Extensions\RecommendationExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="LightInjectConfig.cs" />
+    <Compile Include="Mappers\RecommendationToViewModel.cs" />
+    <Compile Include="Mappers\TopTracksToViewModel.cs" />
     <Compile Include="Models\RecommendationViewModel.cs" />
     <Compile Include="Models\SearchQueryModel.cs" />
     <Compile Include="Models\TopTrackViewModel.cs" />

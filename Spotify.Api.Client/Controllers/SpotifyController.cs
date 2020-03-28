@@ -1,11 +1,11 @@
-﻿using Spotify.Api.Web.Models;
+﻿using Spotify.Api.Client.Models;
 using Spotify.Api.Service.Contracts;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Spotify.Api.Web.Extensions;
+using Spotify.Api.Client.Extensions;
 using System;
 
-namespace Spotify.Api.Web.Controllers
+namespace Spotify.Api.Client.Controllers
 {
     /// <summary>
     /// Controller for the Spotify API
